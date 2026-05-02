@@ -3,196 +3,444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For You ♡</title>
-    <!-- Font น่ารักแบบมินิมอล ไม่แก่ -->
-    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@300;500&family=Outfit:wght@300;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+    <title>Our Special Story ♡</title>
     
+    <!-- Fonts & Libraries -->
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@300;500;700&family=Outfit:wght@200;400;600&display=swap" rel="stylesheet">
+    <!-- Swiper CSS (สำหรับระบบปัดหน้าจอ) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
     <style>
         :root {
-            --bg-pastel: #fff5f7; /* ชมพูอ่อนละมุน */
-            --soft-pink: #ffdae3;
-            --accent-pink: #ff85a2;
-            --text-dark: #6b5b5e;
+            --primary-pink: #ffafbd;
+            --secondary-pink: #ffc3a0;
+            --soft-white: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-main: #5d4d50;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body, html {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            background-color: var(--bg-pastel);
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             font-family: 'Mali', cursive;
-            color: var(--text-dark);
+            color: var(--text-main);
             overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
+            /* พื้นหลังไล่เฉดสีให้ดูมีมิติ */
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe4e9 50%, #ffd1dc 100%);
         }
 
-        /* --- เอฟเฟกต์หัวใจโปร่งใสลอย (Background) --- */
-        .heart-stream {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: -1;
+        /* --- เอฟเฟกต์พื้นหลัง (Orbs) --- */
+        .bg-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-pink);
+            filter: blur(100px);
+            border-radius: 50%;
+            opacity: 0.4;
+            z-index: -2;
+            animation: moveGlow 15s infinite alternate;
         }
 
-        .floating-h {
+        @keyframes moveGlow {
+            0% { top: -10%; left: -10%; }
+            100% { top: 70%; left: 80%; }
+        }
+
+        /* --- สติ๊กเกอร์และหัวใจลอย --- */
+        .floating-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .sticker {
             position: absolute;
-            color: rgba(255, 133, 162, 0.15); /* หัวใจโปร่งใส */
             font-size: 24px;
-            animation: floatSlow 20s linear infinite;
+            opacity: 0.6;
+            animation: floatAnim var(--d) linear infinite;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.05));
         }
 
-        @keyframes floatSlow {
+        .heart-outline {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 133, 162, 0.3);
+            font-weight: lighter;
+            animation: floatAnim var(--d) linear infinite;
+        }
+
+        @keyframes floatAnim {
             0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
             100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
 
-        /* --- หน้าแรกแบบเลื่อน (Sliding Cover) --- */
-        .cover-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: white;
-            z-index: 100;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+        /* --- หน้าปกเลื่อนขึ้น (Slide Overlay) --- */
+        #cover-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+            overflow: hidden;
         }
 
-        .cover-overlay.slide-up { transform: translateY(-100%); }
+        #cover-overlay::before {
+            content: "";
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255,175,189,0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
 
-        .slide-btn {
-            margin-top: 20px;
-            padding: 12px 35px;
-            border: 1.5px solid var(--soft-pink);
+        .cover-content {
+            text-align: center;
+            animation: fadeIn 2s ease;
+        }
+
+        .cover-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            letter-spacing: 12px;
+            margin: 0;
+            background: linear-gradient(to right, #ff85a2, #ffb3c1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 200;
+        }
+
+        .cover-subtitle {
+            font-size: 1rem;
+            color: #ccc;
+            margin-top: 10px;
+            letter-spacing: 3px;
+        }
+
+        .btn-open {
+            margin-top: 50px;
+            padding: 15px 45px;
+            border: 1px solid #ffdae3;
             background: white;
-            color: var(--accent-pink);
+            color: #ff85a2;
             border-radius: 50px;
             font-family: 'Outfit', sans-serif;
+            font-weight: 400;
+            letter-spacing: 2px;
             cursor: pointer;
-            transition: 0.4s;
-            font-weight: 600;
-            letter-spacing: 1px;
+            transition: 0.5s;
+            box-shadow: 0 10px 20px rgba(255, 175, 189, 0.2);
         }
 
-        .slide-btn:hover { background: var(--bg-pastel); transform: scale(1.05); }
+        .btn-open:hover {
+            letter-spacing: 5px;
+            background: #fff5f7;
+            box-shadow: 0 15px 30px rgba(255, 175, 189, 0.3);
+        }
 
-        /* --- ตัวสมุด (Book Container) --- */
-        .book-section { opacity: 0; transition: 1.2s; }
-        .book-section.show { opacity: 1; }
+        /* --- ระบบปัดหน้าจอ (Swiper) --- */
+        .swiper {
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: 1.5s;
+        }
 
-        .page {
-            background: white;
+        .swiper.active {
+            opacity: 1;
+        }
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* --- การตกแต่งการ์ดแต่ละหน้า --- */
+        .content-card {
+            background: var(--soft-white);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 400px;
+            height: 80vh;
+            border-radius: 30px;
             padding: 30px;
-            border: 1px solid rgba(0,0,0,0.02);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
         }
 
-        .img-box {
-            width: 90%; height: 260px;
-            background: #fdfdfd;
-            border-radius: 15px;
+        .image-frame {
+            width: 100%;
+            height: 350px;
+            background: #fff;
+            border-radius: 20px;
             overflow: hidden;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 15px rgba(255, 182, 193, 0.15);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+            border: 5px solid white;
         }
 
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-        h2 { font-family: 'Outfit', sans-serif; font-size: 1.3rem; color: var(--accent-pink); margin: 0; }
-        p { font-size: 0.9rem; color: #888; margin-top: 10px; text-align: center; line-height: 1.6; }
+        .card-text {
+            text-align: center;
+        }
 
-        .deco { position: absolute; font-size: 25px; opacity: 0.5; }
+        .card-text h2 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: #ff85a2;
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+        }
+
+        .card-text p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #777;
+            margin: 0;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.8rem;
+            color: #ddd;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* --- ปุ่มนำทางแบบจุด --- */
+        .swiper-pagination-bullet-active {
+            background: var(--accent-pink) !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="heart-stream" id="heartBox"></div>
+    <!-- Background Orbs -->
+    <div class="bg-glow"></div>
 
-    <!-- หน้าแรก (Cover) -->
-    <div class="cover-overlay" id="cover">
-        <div style="font-size: 40px;">✨</div>
-        <h1 style="font-family: 'Outfit'; font-weight: 300; letter-spacing: 5px; margin: 10px 0;">SPECIAL</h1>
-        <button class="slide-btn" onclick="openBook()">Slide to Open</button>
-    </div>
+    <!-- Floating Decorations -->
+    <div class="floating-container" id="floatBox"></div>
 
-    <!-- เนื้อหาสมุด 6 หน้า -->
-    <div class="book-section" id="mainContent">
-        <div id="book">
-            <!-- หน้า 1: Introduction -->
-            <div class="page">
-                <span class="deco" style="top: 20px; left: 20px;">🌸</span>
-                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+1" alt="1"></div>
-                <h2>The First Day</h2>
-                <p>ตั้งแต่วันแรกที่เจอกัน...<br>โลกของเธอก็เปลี่ยนไปเลยนะ</p>
-            </div>
-
-            <!-- หน้า 2: Happy Moments -->
-            <div class="page">
-                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+2" alt="2"></div>
-                <h2>Your Smile</h2>
-                <p>ชอบรอยยิ้มแบบนี้ที่สุด<br>ยิ้มบ่อยๆ นะคนเก่ง</p>
-                <span class="deco" style="bottom: 20px; right: 20px;">🧸</span>
-            </div>
-
-            <!-- หน้า 3: Love -->
-            <div class="page">
-                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+3" alt="3"></div>
-                <h2>Everyday with You</h2>
-                <p>ขอบคุณที่คอยอยู่ข้างๆ กัน<br>ไม่ว่าจะเจออะไรก็ตาม</p>
-            </div>
-
-            <!-- หน้า 4: Memories -->
-            <div class="page">
-                <span class="deco" style="top: 20px; right: 20px;">🎀</span>
-                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+4" alt="4"></div>
-                <h2>Good Times</h2>
-                <p>ทุกช่วงเวลาที่ผ่านมา<br>มันมีค่ามากสำหรับเรา</p>
-            </div>
-
-            <!-- หน้า 5: Future -->
-            <div class="page">
-                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+5" alt="5"></div>
-                <h2>Grow Together</h2>
-                <p>อยู่เป็นความสุขของกันและกัน<br>แบบนี้ไปเรื่อยๆ เลยนะ</p>
-            </div>
-
-            <!-- หน้า 6: Final Page -->
-            <div class="page" style="background-color: #fff9fa;">
-                <div style="font-size: 50px; margin-bottom: 20px;">💖</div>
-                <h1 style="font-family: 'Outfit'; color: var(--accent-pink); margin: 0;">Love You</h1>
-                <p>รักเธอที่สุดในโลก!<br>Always & Forever ♡</p>
-                <span class="deco" style="bottom: 30px; left: 30px;">🦢</span>
-            </div>
+    <!-- Cover Layer -->
+    <div id="cover-overlay">
+        <div class="cover-content">
+            <div style="font-size: 4rem; margin-bottom: 10px;">☁️</div>
+            <h1 class="cover-title">FOR YOU</h1>
+            <p class="cover-subtitle">M E M O R I E S</p>
+            <button class="btn-open" onclick="unlockBook()">START JOURNEY</button>
         </div>
     </div>
 
+    <!-- Main Content (Swiper) -->
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            
+            <!-- Page 1 -->
+            <div class="swiper-slide">
+                <div class="content-card">
+                    <div class="image-frame">
+                        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000" alt="1">
+                    </div>
+                    <div class="card-text">
+                        <h2>The First Meet</h2>
+                        <p>ทุกอย่างดูสดใสขึ้น<br>ตั้งแต่วันที่เราได้พบกัน</p>
+                    </div>
+                    <div class="page-number">01 / 06</div>
+                </div>
+            </div>
+
+            <!-- Page 2 -->
+            <div class="swiper-slide">
+                <div class="content-card">
+                    <div class="image-frame">
+                        <img src="https://images.unsplash.com/photo-1516589174184-c6852657d803?q=80&w=1000" alt="2">
+                    </div>
+                    <div class="card-text">
+                        <h2>Happy Days</h2>
+                        <p>ขอบคุณที่เป็นความสบายใจ<br>ในทุกๆ วันที่เหนื่อยล้า</p>
+                    </div>
+                    <div class="page-number">02 / 06</div>
+                </div>
+            </div>
+
+            <!-- Page 3 -->
+            <div class="swiper-slide">
+                <div class="content-card">
+                    <div class="image-frame">
+                        <img src="https://images.unsplash.com/photo-1494972308255-723781be9d4d?q=80&w=1000" alt="3">
+                    </div>
+                    <div class="card-text">
+                        <h2>Little Things</h2>
+                        <p>เรื่องเล็กๆ ที่เราทำด้วยกัน<br>มันมีความหมายมากนะ</p>
+                    </div>
+                    <div class="page-number">03 / 06</div>
+                </div>
+            </div>
+
+            <!-- Page 4 -->
+            <div class="swiper-slide">
+                <div class="content-card">
+                    <div class="image-frame">
+                        <img src="https://images.unsplash.com/photo-1511306760489-39d61e1cdc44?q=80&w=1000" alt="4">
+                    </div>
+                    <div class="card-text">
+                        <h2>Growth</h2>
+                        <p>ดีใจจังที่มีเธอเดินข้างๆ<br>ในวันที่เราเติบโตขึ้น</p>
+                    </div>
+                    <div class="page-number">04 / 06</div>
+                </div>
+            </div>
+
+            <!-- Page 5 -->
+            <div class="swiper-slide">
+                <div class="content-card">
+                    <div class="image-frame">
+                        <img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?q=80&w=1000" alt="5">
+                    </div>
+                    <div class="card-text">
+                        <h2>Best Partner</h2>
+                        <p>ไม่มีใครเข้าใจเรา<br>ได้เท่าเธออีกแล้วล่ะ</p>
+                    </div>
+                    <div class="page-number">05 / 06</div>
+                </div>
+            </div>
+
+            <!-- Page 6 Final -->
+            <div class="swiper-slide">
+                <div class="content-card" style="background: linear-gradient(to bottom, #fff, #fff0f3);">
+                    <div style="font-size: 80px; margin-top: 50px;">🌷</div>
+                    <div class="card-text" style="margin-top: 30px;">
+                        <h2 style="font-size: 2.5rem;">Love ya!</h2>
+                        <p>อยู่ด้วยกันไปนานๆ นะ<br>เจ้าความรักของฉัน ♡</p>
+                    </div>
+                    <div class="page-number">06 / 06</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- Pagination -->
+        <div class="swiper-pagination"></div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <script>
-        // หัวใจลอย (Background)
-        const heartBox = document.getElementById('heartBox');
-        function createHeart() {
-            const h = document.createElement('div');
-            h.classList.add('floating-h');
-            h.innerHTML = '♡';
-            h.style.left = Math.random() * 100 + 'vw';
-            h.style.animationDuration = (Math.random() * 10 + 10) + 's';
-            heartBox.appendChild(h);
-            setTimeout(() => h.remove(), 20000);
-        }
-        setInterval(createHeart, 3000);
-
-        // ตั้งค่าสมุดปัด (6 หน้า)
-        const pageFlip = new St.PageFlip(document.getElementById('book'), {
-            width: 350,
-            height: 500,
-            showCover: false,
-            usePortrait: true
-        });
-        pageFlip.loadFromHTML(document.querySelectorAll('.page'));
-
-        // ฟังก์ชันเปิดสมุด
-        function openBook() {
-            document.getElementById('cover').classList.add('slide-up');
+        // --- ระบบสร้างสติ๊กเกอร์และหัวใจลอย ---
+        const floatBox = document.getElementById('floatBox');
+        const stickers = ['🎀', '🧸', '🍭', '🍓', '🦢', '☁️', '🪄'];
+        
+        function createFloatingElement() {
+            const isSticker = Math.random() > 0.5;
+            const el = document.createElement('div');
+            
+            if(isSticker) {
+                el.className = 'sticker';
+                el.innerHTML = stickers[Math.floor(Math.random() * stickers.length)];
+            } else {
+                el.className = 'heart-outline';
+                el.innerHTML = '♡';
+            }
+            
+            const startX = Math.random() * 100;
+            const duration = 10 + Math.random() * 15;
+            
+            el.style.left = startX + 'vw';
+            el.style.setProperty('--d', duration + 's');
+            el.style.fontSize = (15 + Math.random() * 20) + 'px';
+            
+            floatBox.appendChild(el);
+            
+            // ลบออกเมื่ออนิเมชั่นจบ
             setTimeout(() => {
-                document.getElementById('mainContent').classList.add('show');
-            }, 600);
+                el.remove();
+            }, duration * 1000);
         }
+
+        // ปล่อยหัวใจลอยเรื่อยๆ (ปรับความถี่ตรงนี้)
+        setInterval(createFloatingElement, 1500);
+
+        // --- ตั้งค่า Swiper ---
+        const swiper = new Swiper(".mySwiper", {
+            direction: "horizontal",
+            loop: false,
+            speed: 800,
+            grabCursor: true,
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            effect: "slide" // ปัดแบบธรรมดาที่ใช้งานง่าย
+        });
+
+        // --- ฟังก์ชันปลดล็อคหน้าปก ---
+        function unlockBook() {
+            const cover = document.getElementById('cover-overlay');
+            const swiperEl = document.querySelector('.swiper');
+            
+            cover.style.transform = 'translateY(-100%)';
+            
+            setTimeout(() => {
+                swiperEl.classList.add('active');
+                cover.style.display = 'none';
+            }, 1000);
+        }
+
+        // เพิ่ม Interactive คลิกที่หน้าจอแล้วมีหัวใจ
+        window.addEventListener('click', (e) => {
+            const heart = document.createElement('div');
+            heart.innerHTML = '💖';
+            heart.style.position = 'fixed';
+            heart.style.left = (e.clientX - 10) + 'px';
+            heart.style.top = (e.clientY - 10) + 'px';
+            heart.style.pointerEvents = 'none';
+            heart.style.transition = '1s';
+            heart.style.zIndex = '2000';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.style.transform = 'translateY(-100px) scale(2)';
+                heart.style.opacity = '0';
+            }, 50);
+            setTimeout(() => heart.remove(), 1000);
+        });
     </script>
 </body>
 </html>
