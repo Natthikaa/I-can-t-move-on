@@ -3,241 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>baby ♡</title>
-    <!-- Fonts: น่ารักแบบพอดีๆ ไม่แก่ -->
-    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@300;500;700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <title>For You ♡</title>
+    <!-- Font น่ารักแบบมินิมอล ไม่แก่ -->
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@300;500&family=Outfit:wght@300;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
     
     <style>
         :root {
-            --soft-pink: #fff0f3;
-            --main-pink: #ffb3c1;
-            --text-color: #594a4e;
+            --bg-pastel: #fff5f7; /* ชมพูอ่อนละมุน */
+            --soft-pink: #ffdae3;
+            --accent-pink: #ff85a2;
+            --text-dark: #6b5b5e;
         }
 
-        * { box-sizing: border-box; cursor: url('https://cdn-icons-png.flaticon.com/32/1077/1077035.png'), auto; }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--soft-pink);
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg-pastel);
             font-family: 'Mali', cursive;
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            color: var(--text-dark);
             overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        /* เอฟเฟกต์แสงตามเมาส์ */
-        .cursor-glow {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255,182,193,0.3) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 0;
+        /* --- เอฟเฟกต์หัวใจโปร่งใสลอย (Background) --- */
+        .heart-stream {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
         }
 
-        /* หัวใจโปร่งใสลอยๆ */
-        .bg-heart {
-            position: fixed;
-            color: rgba(255, 133, 162, 0.2);
-            font-size: 20px;
-            pointer-events: none;
-            animation: floatUp 15s linear infinite;
-            z-index: -1;
+        .floating-h {
+            position: absolute;
+            color: rgba(255, 133, 162, 0.15); /* หัวใจโปร่งใส */
+            font-size: 24px;
+            animation: floatSlow 20s linear infinite;
         }
 
-        @keyframes floatUp {
+        @keyframes floatSlow {
             0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.5; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
             100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
 
-        /* สมุด */
-        .book-wrapper {
-            z-index: 10;
-            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.1));
+        /* --- หน้าแรกแบบเลื่อน (Sliding Cover) --- */
+        .cover-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: white;
+            z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
-        .page {
-            background-color: #fff;
-            padding: 30px;
-            border: 1px solid #f9f9f9;
-        }
+        .cover-overlay.slide-up { transform: translateY(-100%); }
 
-        /* สไตล์รูปโพลารอยด์ */
-        .photo-frame {
+        .slide-btn {
+            margin-top: 20px;
+            padding: 12px 35px;
+            border: 1.5px solid var(--soft-pink);
             background: white;
-            padding: 10px 10px 30px 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transform: rotate(-2deg);
-            transition: 0.5s;
-            width: 85%;
-            margin-bottom: 15px;
-        }
-
-        .photo-frame:hover { transform: rotate(0deg) scale(1.05); }
-
-        .photo-frame img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-
-        /* Typography */
-        h2 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
-            margin: 10px 0;
-            color: var(--main-pink);
+            color: var(--accent-pink);
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: 0.4s;
+            font-weight: 600;
             letter-spacing: 1px;
         }
 
-        p { font-size: 0.95rem; line-height: 1.6; color: #888; }
+        .slide-btn:hover { background: var(--bg-pastel); transform: scale(1.05); }
 
-        /* สติ๊กเกอร์ขยับได้ */
-        .cute-sticker {
-            position: absolute;
-            font-size: 35px;
-            animation: wiggle 3s ease-in-out infinite;
+        /* --- ตัวสมุด (Book Container) --- */
+        .book-section { opacity: 0; transition: 1.2s; }
+        .book-section.show { opacity: 1; }
+
+        .page {
+            background: white;
+            padding: 30px;
+            border: 1px solid rgba(0,0,0,0.02);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
-        @keyframes wiggle {
-            0%, 100% { transform: rotate(-5deg) translateY(0); }
-            50% { transform: rotate(5deg) translateY(-5px); }
+        .img-box {
+            width: 90%; height: 260px;
+            background: #fdfdfd;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 15px rgba(255, 182, 193, 0.15);
         }
 
-        /* หน้าแรกสุดพิเศษ */
-        .cover {
-            background: linear-gradient(to bottom right, #ffffff, #fff5f7);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .btn-open {
-            margin-top: 20px;
-            padding: 12px 35px;
-            border: 2px solid var(--main-pink);
-            background: transparent;
-            color: var(--main-pink);
-            border-radius: 30px;
-            font-family: 'Mali', sans-serif;
-            font-weight: bold;
-            transition: 0.3s;
-        }
+        h2 { font-family: 'Outfit', sans-serif; font-size: 1.3rem; color: var(--accent-pink); margin: 0; }
+        p { font-size: 0.9rem; color: #888; margin-top: 10px; text-align: center; line-height: 1.6; }
 
-        .btn-open:hover {
-            background: var(--main-pink);
-            color: white;
-            box-shadow: 0 5px 15px rgba(255, 179, 193, 0.4);
-        }
-
+        .deco { position: absolute; font-size: 25px; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <div class="cursor-glow" id="glow"></div>
+    <div class="heart-stream" id="heartBox"></div>
 
-    <div class="book-wrapper">
+    <!-- หน้าแรก (Cover) -->
+    <div class="cover-overlay" id="cover">
+        <div style="font-size: 40px;">✨</div>
+        <h1 style="font-family: 'Outfit'; font-weight: 300; letter-spacing: 5px; margin: 10px 0;">SPECIAL</h1>
+        <button class="slide-btn" onclick="openBook()">Slide to Open</button>
+    </div>
+
+    <!-- เนื้อหาสมุด 6 หน้า -->
+    <div class="book-section" id="mainContent">
         <div id="book">
-            <!-- หน้า 1 Cover -->
-            <div class="page cover">
-                <div class="cute-sticker" style="top:10%; right:15%;">🧁</div>
-                <h1 style="font-family: 'Poppins'; font-size: 2.5rem; margin-bottom: 0;">hello.</h1>
-                <p style="margin-top: 5px;">นี่คือของขวัญเล็กๆ สำหรับคุณ</p>
-                <button class="btn-open" onclick="pageFlip.flipNext()">click to open ♡</button>
-                <div class="cute-sticker" style="bottom:10%; left:15%;">🧸</div>
-            </div>
-
-            <!-- หน้า 2 -->
+            <!-- หน้า 1: Introduction -->
             <div class="page">
-                <div class="photo-frame">
-                    <img src="https://images.unsplash.com/photo-1516589174184-c6852657d803?q=80&w=1000" alt="memories">
-                </div>
-                <h2>The Beginning</h2>
-                <p>เรื่องราวของเรามันเริ่มจากตรงนี้เนอะ... <br>ขอบคุณที่เข้ามาเป็นเรื่องดีๆ ในชีวิต</p>
-                <span class="cute-sticker" style="bottom: 20px; right: 20px;">🌷</span>
+                <span class="deco" style="top: 20px; left: 20px;">🌸</span>
+                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+1" alt="1"></div>
+                <h2>The First Day</h2>
+                <p>ตั้งแต่วันแรกที่เจอกัน...<br>โลกของเธอก็เปลี่ยนไปเลยนะ</p>
             </div>
 
-            <!-- หน้า 3 (ทำซ้ำแบบนี้ไปจนครบ 7 หน้า) -->
+            <!-- หน้า 2: Happy Moments -->
             <div class="page">
-                <div class="photo-frame" style="transform: rotate(2deg);">
-                    <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000" alt="memories">
-                </div>
-                <h2>Stay Happy</h2>
-                <p>ชอบเวลาเห็นเธอหัวเราะที่สุดเลย <br>รอยยิ้มของเธอคือความสุขของเรานะ</p>
-                <span class="cute-sticker" style="top: 20px; left: 20px;">🍭</span>
+                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+2" alt="2"></div>
+                <h2>Your Smile</h2>
+                <p>ชอบรอยยิ้มแบบนี้ที่สุด<br>ยิ้มบ่อยๆ นะคนเก่ง</p>
+                <span class="deco" style="bottom: 20px; right: 20px;">🧸</span>
             </div>
 
-            <!-- หน้า 4-6 เพิ่มตามรูปแบบด้านบนได้เลยครับ -->
-            <div class="page"><h2>Your Smile</h2><p>ขอให้โลกนี้ใจดีกับเธอเท่าที่เธอใจดีกับเรา</p></div>
-            <div class="page"><h2>Our Journey</h2><p>ค่อยๆ เดินไปด้วยกันแบบนี้ไปเรื่อยๆ นะ</p></div>
-            <div class="page"><h2>Special One</h2><p>เธอเก่งที่สุดแล้วในสายตาเรา</p></div>
+            <!-- หน้า 3: Love -->
+            <div class="page">
+                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+3" alt="3"></div>
+                <h2>Everyday with You</h2>
+                <p>ขอบคุณที่คอยอยู่ข้างๆ กัน<br>ไม่ว่าจะเจออะไรก็ตาม</p>
+            </div>
 
-            <!-- หน้า 7 Last Page -->
-            <div class="page" style="text-align: center;">
-                <h1 style="color: var(--main-pink); font-size: 3rem; margin-top: 50px;">love ya!</h1>
-                <div class="cute-sticker" style="position: static; font-size: 60px;">💖</div>
-                <p style="margin-top: 30px;">ขอบคุณสำหรับทุกอย่างนะครับ<br>อยู่ด้วยกันไปนานๆ นะเจ้าความรัก</p>
+            <!-- หน้า 4: Memories -->
+            <div class="page">
+                <span class="deco" style="top: 20px; right: 20px;">🎀</span>
+                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+4" alt="4"></div>
+                <h2>Good Times</h2>
+                <p>ทุกช่วงเวลาที่ผ่านมา<br>มันมีค่ามากสำหรับเรา</p>
+            </div>
+
+            <!-- หน้า 5: Future -->
+            <div class="page">
+                <div class="img-box"><img src="https://via.placeholder.com/400x500?text=Photo+5" alt="5"></div>
+                <h2>Grow Together</h2>
+                <p>อยู่เป็นความสุขของกันและกัน<br>แบบนี้ไปเรื่อยๆ เลยนะ</p>
+            </div>
+
+            <!-- หน้า 6: Final Page -->
+            <div class="page" style="background-color: #fff9fa;">
+                <div style="font-size: 50px; margin-bottom: 20px;">💖</div>
+                <h1 style="font-family: 'Outfit'; color: var(--accent-pink); margin: 0;">Love You</h1>
+                <p>รักเธอที่สุดในโลก!<br>Always & Forever ♡</p>
+                <span class="deco" style="bottom: 30px; left: 30px;">🦢</span>
             </div>
         </div>
     </div>
 
     <script>
-        // แสงตามเมาส์
-        const glow = document.getElementById('glow');
-        window.addEventListener('mousemove', (e) => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
-        });
-
-        // สร้างหัวใจลอยแบบโปร่งใส (ไม่ถี่มาก)
+        // หัวใจลอย (Background)
+        const heartBox = document.getElementById('heartBox');
         function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('bg-heart');
-            heart.innerHTML = '♡';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = (Math.random() * 8 + 7) + 's';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 15000);
+            const h = document.createElement('div');
+            h.classList.add('floating-h');
+            h.innerHTML = '♡';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            heartBox.appendChild(h);
+            setTimeout(() => h.remove(), 20000);
         }
-        setInterval(createHeart, 2000); // ออกมาทุก 2 วินาที (ไม่ถี่)
+        setInterval(createHeart, 3000);
 
-        // ตั้งค่า Book Flip
+        // ตั้งค่าสมุดปัด (6 หน้า)
         const pageFlip = new St.PageFlip(document.getElementById('book'), {
-            width: 400,
-            height: 550,
-            showCover: true,
-            usePortrait: true,
-            mobileScrollSupport: false
+            width: 350,
+            height: 500,
+            showCover: false,
+            usePortrait: true
         });
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
-        // ลูกเล่นเพิ่ม: คลิกแล้วมีหัวใจ
-        window.addEventListener('click', (e) => {
-            const burst = document.createElement('div');
-            burst.innerHTML = '🌸';
-            burst.style.position = 'fixed';
-            burst.style.left = e.clientX + 'px';
-            burst.style.top = e.clientY + 'px';
-            burst.style.pointerEvents = 'none';
-            burst.style.transition = '0.5s';
-            document.body.appendChild(burst);
-            
+        // ฟังก์ชันเปิดสมุด
+        function openBook() {
+            document.getElementById('cover').classList.add('slide-up');
             setTimeout(() => {
-                burst.style.transform = 'translateY(-50px) scale(2)';
-                burst.style.opacity = '0';
-            }, 10);
-            setTimeout(() => burst.remove(), 600);
-        });
+                document.getElementById('mainContent').classList.add('show');
+            }, 600);
+        }
     </script>
 </body>
 </html>
